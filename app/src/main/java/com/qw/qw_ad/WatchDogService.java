@@ -19,6 +19,7 @@ import java.util.List;
  * 守护服务
  * 监控到APP进程退出,则重启APP
  * https://www.jianshu.com/p/1da4541b70ad
+ * https://blog.csdn.net/aqi00/article/details/71638721
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class WatchDogService extends JobService {
@@ -26,13 +27,10 @@ public class WatchDogService extends JobService {
     //任务执行周期5秒钟
     private static long PERIODIC = 5 * 1000L;
     private static int JOB_ID = 1010;
+    //应用包名称
     private String pkgName = "";
+    //应用名称
     private String appName = "";
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
-        return Service.START_STICKY;
-    }
 
     @Override
     public void onCreate() {
