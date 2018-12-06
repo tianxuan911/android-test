@@ -24,5 +24,10 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
+        <!-- 看门狗服务 -->
+        <service
+            android:name=".WatchDogService"
+            android:permission="android.permission.BIND_JOB_SERVICE">
+        </service>
     </application>
 </manifest>

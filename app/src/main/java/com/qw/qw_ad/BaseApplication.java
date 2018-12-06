@@ -5,6 +5,7 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 public class BaseApplication extends Application {
@@ -17,11 +18,22 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //获取全局上下文
         mContext = getApplicationContext();
+
+        runAppDeamon();
+
         //程序崩溃异常捕获并自动重启
-        Log.i("handler","注册崩溃异常处理");
         Thread.setDefaultUncaughtExceptionHandler(restartHandler);
+    }
+
+    /**
+     * 启动应用守护进程
+     */
+    private void runAppDeamon() {
+        //5.0及以上版本
+        if (Build.VERSION.SDK_INT >= 21) {
+            startService(new Intent(mContext, WatchDogService.class));
+        }
     }
 
     private Thread.UncaughtExceptionHandler restartHandler = new Thread.UncaughtExceptionHandler() {
