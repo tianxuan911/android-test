@@ -32,6 +32,10 @@
         </service>
         <!-- APP更新服务 -->
         <service android:name=".AppUpdateService"/>
+        <!-- APP更新轮询服务 -->
+        <service
+            android:name=".AppUpdateSchedulerService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.qw.qw_ad.fileprovider"

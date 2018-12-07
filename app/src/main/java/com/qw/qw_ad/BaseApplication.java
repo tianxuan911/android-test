@@ -33,6 +33,8 @@ public class BaseApplication extends Application {
         //5.0及以上版本
         if (Build.VERSION.SDK_INT >= 21) {
             startService(new Intent(mContext, WatchDogService.class));
+            //启动版本更新计划任务
+            startService(new Intent(mContext, AppUpdateSchedulerService.class));
         }
     }
 

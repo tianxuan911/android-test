@@ -2,14 +2,12 @@ package com.qw.qw_ad;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
-import android.app.Service;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
@@ -25,8 +23,7 @@ import java.util.List;
 public class WatchDogService extends JobService {
 
     //任务执行周期5秒钟
-    private static long PERIODIC = 5 * 1000L;
-    private static int JOB_ID = 1010;
+    private static long PERIODIC = 5 *1000L;
     //应用包名称
     private String pkgName = "";
     //应用名称
@@ -37,13 +34,13 @@ public class WatchDogService extends JobService {
         super.onCreate();
         pkgName = AppUtils.getPackageName(getApplicationContext());
         appName = AppUtils.getAppName(getApplicationContext());
-        Log.d("watch-dog",String.format("[%s]守护服务创建",appName));
+        Log.d(WatchDogService.class.getName(),String.format("[%s]守护服务创建",appName));
         startJobSheduler();
     }
 
     public void startJobSheduler() {
         try {
-            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, new ComponentName(getPackageName(), WatchDogService.class.getName()));
+            JobInfo.Builder builder = new JobInfo.Builder(SchedulerJobs.JOB_ID_WATCH_DOG, new ComponentName(getPackageName(), WatchDogService.class.getName()));
             //7.0及以上版本
             if (Build.VERSION.SDK_INT >= 24) {
                 builder.setMinimumLatency(PERIODIC); //执行的最小延迟时间
@@ -65,9 +62,9 @@ public class WatchDogService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Log.i("onHandleIntent--",  "--" + Thread.currentThread().getName());
+
         if(!isRun(getApplicationContext())){
-            Log.d("watch-dog",String.format("[%s]应用启动",appName));
+            Log.d(WatchDogService.class.getName(),String.format("[%s]启动应用",appName));
             AppUtils.startMainActive(getApplicationContext());
         }
         return false;
@@ -76,7 +73,7 @@ public class WatchDogService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.d("watch-dog","运行结束");
+        Log.d(WatchDogService.class.getName(),"运行结束");
         return false;
     }
 
@@ -94,12 +91,12 @@ public class WatchDogService extends JobService {
         for (ActivityManager.RunningTaskInfo info : list) {
             if (info.topActivity.getPackageName().equals(pkgName) || info.baseActivity.getPackageName().equals(pkgName)) {
                 isAppRunning = true;
-                Log.d("ActivityService isRun()",info.topActivity.getPackageName() + " info.baseActivity.getPackageName()="+info.baseActivity.getPackageName());
+//                Log.d(WatchDogService.class.getName(),info.topActivity.getPackageName() + " info.baseActivity.getPackageName()="+info.baseActivity.getPackageName());
                 break;
             }
         }
 
-        Log.d("ActivityService isRun()", pkgName+"   ...isAppRunning......"+isAppRunning);
+        Log.d(WatchDogService.class.getName(),String.format(isAppRunning?"[%s]应用运行正常":"[%s]应用已停止",appName));
         return isAppRunning;
     }
 }

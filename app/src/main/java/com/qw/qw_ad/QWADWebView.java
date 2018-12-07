@@ -31,8 +31,6 @@ public class QWADWebView extends Activity {
         injectJSInterface(myWebView);
 
         loadData(myWebView);
-        //检查更新
-        startService(new Intent(getApplicationContext(), AppUpdateService.class));
 
     }
 

@@ -25,10 +25,12 @@ import okhttp3.Response;
  * http://www.cnblogs.com/bugzone/p/strictMode.html
  */
 public class AppUpdateService extends IntentService {
+
     private static boolean isDownloading = false;
     private File downloadDir = null;
     private String apkName = null;
-    public AppUpdateService(){
+
+    public AppUpdateService() {
         super("AppUpdateService");
     }
 
@@ -45,7 +47,7 @@ public class AppUpdateService extends IntentService {
 
         //如果服务器版本号与当前APP版本号不同,下载apk->安装->重启app
         int latestedVersionCode = getAppVersionCode();
-        Log.i(AppUpdateService.class.getName(),String.format("对比版本号,当前版本号[%d],最新版本号[%d]",AppUtils.getVersionCode(getApplicationContext()),latestedVersionCode));
+        Log.i(AppUpdateService.class.getName(), String.format("对比版本号,当前版本号[%d],最新版本号[%d]", AppUtils.getVersionCode(getApplicationContext()), latestedVersionCode));
         if (isDownloading == true || latestedVersionCode == -1 || AppUtils.getVersionCode(getApplicationContext()) == latestedVersionCode) {
             return;
         }
@@ -58,11 +60,20 @@ public class AppUpdateService extends IntentService {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.i(AppUpdateService.class.getName(), String.format("启动最新版本APK下载,文件目录[%s]",downloadDir.getAbsolutePath()));
-                if(response.code()!=HttpURLConnection.HTTP_OK){
-                    Log.i(AppUpdateService.class.getName(), String.format("最新版本APK失败[HTTPCODE:%d]",response.code()));
+                Log.i(AppUpdateService.class.getName(), String.format("启动最新版本APK下载,文件目录[%s]", downloadDir.getAbsolutePath()));
+
+                if (response.code() != HttpURLConnection.HTTP_OK) {
+                    Log.i(AppUpdateService.class.getName(), String.format("最新版本APK失败[HTTPCODE:%d]", response.code()));
                     return;
                 }
+
+                downloadApk(response);
+
+                installApp();
+
+            }
+
+            private void downloadApk(Response response) throws IOException {
                 isDownloading = true;
                 InputStream inputStream = null;
                 FileOutputStream outputStream = null;
@@ -73,7 +84,7 @@ public class AppUpdateService extends IntentService {
                     byte[] buffer = new byte[1024];
                     int size;
                     while ((size = inputStream.read(buffer)) > 0) {
-                        Log.d(AppUpdateService.class.getName(),String.format("本次下载进度%dbyte",size));
+//                        Log.d(AppUpdateService.class.getName(), String.format("本次下载进度%dbyte", size));
                         outputStream.write(buffer, 0, size);
                     }
                 } finally {
@@ -85,11 +96,7 @@ public class AppUpdateService extends IntentService {
                         inputStream.close();
                     }
                 }
-
-                Log.i(AppUpdateService.class.getName(), String.format("最新版本APK下载成功,文件目录[%s]",downloadDir.getAbsolutePath()));
-
-                installApp();
-
+                Log.i(AppUpdateService.class.getName(), String.format("最新版本APK下载成功,文件目录[%s]", downloadDir.getAbsolutePath()));
             }
         });
 
@@ -107,16 +114,16 @@ public class AppUpdateService extends IntentService {
             Response response = ApiUtils.getClient().newCall(request).execute();
             String versionCode = response.body().string();
             response.close();
-            Log.d(AppUpdateService.class.getName(), String.format("最新版本号[%s]",versionCode));
+            Log.d(AppUpdateService.class.getName(), String.format("最新版本号[%s]", versionCode));
             return Integer.parseInt(versionCode);
         } catch (IOException e) {
-            Log.e(AppUpdateService.class.getName(),"版本号获取错误",e);
+            Log.e(AppUpdateService.class.getName(), "版本号获取错误", e);
         }
         return -1;
     }
 
-    private void installApp(){
-        Log.i(AppUpdateService.class.getName(), String.format("启动最新版本APK安装,文件目录[%s]",downloadDir.getAbsolutePath()));
+    private void installApp() {
+        Log.i(AppUpdateService.class.getName(), String.format("启动最新版本APK安装,文件目录[%s]", downloadDir.getAbsolutePath()));
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         //版本在7.0以上不能直接通过uri访问的
@@ -126,7 +133,7 @@ public class AppUpdateService extends IntentService {
             //添加这一句表示对目标应用临时授权该Uri所代表的文件
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             //参数1:上下文, 参数2:Provider主机地址 和配置文件中保持一致,参数3:共享的文件
-            Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), AppUtils.getPackageName(getApplicationContext())+".fileprovider", new File(downloadDir, apkName));//注意修改
+            Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), AppUtils.getPackageName(getApplicationContext()) + ".fileprovider", new File(downloadDir, apkName));//注意修改
             intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
         } else {
             intent.setDataAndType(Uri.fromFile(new File(downloadDir, apkName)), "application/vnd.android.package-archive");
@@ -134,4 +141,5 @@ public class AppUpdateService extends IntentService {
         }
         startActivity(intent);
     }
+
 }
