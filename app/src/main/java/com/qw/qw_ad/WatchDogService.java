@@ -65,6 +65,7 @@ public class WatchDogService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
+        Log.i("onHandleIntent--",  "--" + Thread.currentThread().getName());
         if(!isRun(getApplicationContext())){
             Log.d("watch-dog",String.format("[%s]应用启动",appName));
             AppUtils.startMainActive(getApplicationContext());
@@ -98,7 +99,7 @@ public class WatchDogService extends JobService {
             }
         }
 
-        Log.d("ActivityService isRun()", "com.ad 程序   ...isAppRunning......"+isAppRunning);
+        Log.d("ActivityService isRun()", pkgName+"   ...isAppRunning......"+isAppRunning);
         return isAppRunning;
     }
 }

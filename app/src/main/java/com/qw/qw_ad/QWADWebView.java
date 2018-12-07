@@ -1,6 +1,7 @@
 package com.qw.qw_ad;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
@@ -30,6 +31,8 @@ public class QWADWebView extends Activity {
         injectJSInterface(myWebView);
 
         loadData(myWebView);
+        //检查更新
+        startService(new Intent(getApplicationContext(), AppUpdateService.class));
 
     }
 
