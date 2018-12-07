@@ -12,11 +12,13 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.qw.qw_ad.workers.AppUpdateUtil;
+
+import static com.qw.qw_ad.workers.AppUpdateUtil.PERIODIC;
+
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class AppUpdateSchedulerService extends JobService {
 
-    //任务执行周期60秒
-    private static long PERIODIC = 60 * 1000L;
 
     @Override
     public void onCreate() {
@@ -48,11 +50,11 @@ public class AppUpdateSchedulerService extends JobService {
             JobInfo.Builder builder = new JobInfo.Builder(SchedulerJobs.JOB_ID_APP_UPDATE, new ComponentName(getPackageName(), AppUpdateSchedulerService.class.getName()));
             //7.0及以上版本
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                builder.setMinimumLatency(PERIODIC); //执行的最小延迟时间
-                builder.setOverrideDeadline(PERIODIC);  //执行的最长延时时间
+                builder.setMinimumLatency(AppUpdateUtil.PERIODIC); //执行的最小延迟时间
+                builder.setOverrideDeadline(AppUpdateUtil.PERIODIC);  //执行的最长延时时间
                 builder.setBackoffCriteria(JobInfo.DEFAULT_INITIAL_BACKOFF_MILLIS, JobInfo.BACKOFF_POLICY_LINEAR);//线性重试方案
             } else {
-                builder.setPeriodic(PERIODIC);
+                builder.setPeriodic(AppUpdateUtil.PERIODIC);
             }
             builder.setPersisted(true);  // 设置设备重启时，执行该任务
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
