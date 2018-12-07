@@ -30,11 +30,19 @@ public class BaseApplication extends Application {
      * 启动应用守护进程
      */
     private void runAppDeamon() {
-        //5.0及以上版本
-        if (Build.VERSION.SDK_INT >= 21) {
-            startService(new Intent(mContext, WatchDogService.class));
-            //启动版本更新计划任务
-            startService(new Intent(mContext, AppUpdateSchedulerService.class));
+        //启动应用守护进程
+        Intent watchDog = new Intent(mContext, WatchDogService.class);
+        //启动版本更新计划任务
+        Intent appUpdate = new Intent(mContext, AppUpdateSchedulerService.class);
+        //8.0及以上
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mContext.startForegroundService(watchDog);
+            mContext.startForegroundService(appUpdate);
+        //[5.0,8.0)
+        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            startService(watchDog);
+
+            startService(appUpdate);
         }
     }
 

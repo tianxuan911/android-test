@@ -1,6 +1,7 @@
 package com.qw.qw_ad;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -37,6 +38,7 @@ public class AppUpdateService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        startForeground(SchedulerJobs.JOB_ID_APP_UPDATE,new Notification());
         downloadDir = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
         apkName = AppUtils.getAppName(getApplicationContext()) + ".apk";
 

@@ -1,5 +1,6 @@
 package com.qw.qw_ad;
 
+import android.app.Notification;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
@@ -20,12 +21,19 @@ public class AppUpdateSchedulerService extends JobService {
     @Override
     public void onCreate() {
         super.onCreate();
+        startForeground(SchedulerJobs.JOB_ID_APP_UPDATE,new Notification());
         startJobSheduler();
     }
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        startService(new Intent(getApplicationContext(),AppUpdateService.class));
+        Intent appUpdate = new Intent(getApplicationContext(),AppUpdateService.class);
+        //8.0及以上
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getApplication().startForegroundService(appUpdate);
+        }else{
+            startService(appUpdate);
+        }
         return false;
     }
 
@@ -39,7 +47,7 @@ public class AppUpdateSchedulerService extends JobService {
         try {
             JobInfo.Builder builder = new JobInfo.Builder(SchedulerJobs.JOB_ID_APP_UPDATE, new ComponentName(getPackageName(), AppUpdateSchedulerService.class.getName()));
             //7.0及以上版本
-            if (Build.VERSION.SDK_INT >= 24) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 builder.setMinimumLatency(PERIODIC); //执行的最小延迟时间
                 builder.setOverrideDeadline(PERIODIC);  //执行的最长延时时间
                 builder.setBackoffCriteria(JobInfo.DEFAULT_INITIAL_BACKOFF_MILLIS, JobInfo.BACKOFF_POLICY_LINEAR);//线性重试方案
@@ -48,7 +56,7 @@ public class AppUpdateSchedulerService extends JobService {
             }
             builder.setPersisted(true);  // 设置设备重启时，执行该任务
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-            builder.setRequiresCharging(true); // 当插入充电器，执行该任务
+//            builder.setRequiresCharging(true); // 当插入充电器，执行该任务
 
             JobScheduler jobScheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
             jobScheduler.schedule(builder.build());

@@ -2,6 +2,7 @@ package com.qw.qw_ad;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.Notification;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
@@ -32,6 +33,9 @@ public class WatchDogService extends JobService {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        startForeground(SchedulerJobs.JOB_ID_WATCH_DOG,new Notification());
+
         pkgName = AppUtils.getPackageName(getApplicationContext());
         appName = AppUtils.getAppName(getApplicationContext());
         Log.d(WatchDogService.class.getName(),String.format("[%s]守护服务创建",appName));
@@ -42,7 +46,7 @@ public class WatchDogService extends JobService {
         try {
             JobInfo.Builder builder = new JobInfo.Builder(SchedulerJobs.JOB_ID_WATCH_DOG, new ComponentName(getPackageName(), WatchDogService.class.getName()));
             //7.0及以上版本
-            if (Build.VERSION.SDK_INT >= 24) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 builder.setMinimumLatency(PERIODIC); //执行的最小延迟时间
                 builder.setOverrideDeadline(PERIODIC);  //执行的最长延时时间
                 builder.setBackoffCriteria(JobInfo.DEFAULT_INITIAL_BACKOFF_MILLIS, JobInfo.BACKOFF_POLICY_LINEAR);//线性重试方案
@@ -51,12 +55,12 @@ public class WatchDogService extends JobService {
             }
             builder.setPersisted(true);  // 设置设备重启时，执行该任务
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-            builder.setRequiresCharging(true); // 当插入充电器，执行该任务
+//            builder.setRequiresCharging(true); // 当插入充电器，执行该任务
 
             JobScheduler jobScheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
             jobScheduler.schedule(builder.build());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.e(WatchDogService.class.getName(),"启动应用重启计划任务出现错误",ex);
         }
     }
 
