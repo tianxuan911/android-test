@@ -1,6 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+//            keyAlias 'qwad'
+//            keyPassword '123456'
+//            storeFile file('../../keystore/qwad-sysauth.jks')
+//            storePassword '123456'
+        }
+        release {
+//            keyAlias 'qwad'
+//            keyPassword '123456'
+//            storeFile file('../../keystore/qwad-sysauth.jks')
+//            storePassword '123456'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.qw.qw_ad"
@@ -14,6 +28,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
@@ -21,15 +39,12 @@ android {
 
 dependencies {
     def work_version = "1.0.0-alpha12"
-
-    implementation "android.arch.work:work-runtime:$work_version" // use -ktx for Kotlin+Coroutines
-
+    implementation "android.arch.work:work-runtime:$work_version"
+    // use -ktx for Kotlin+Coroutines
     // optional - RxJava2 support
     implementation "android.arch.work:work-rxjava2:$work_version"
-
     // optional - Test helpers
     androidTestImplementation "android.arch.work:work-testing:$work_version"
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Chiefway</string>
+    <string name="accessibility_service_description">Chiefway应用自动安装</string>
 </resources>

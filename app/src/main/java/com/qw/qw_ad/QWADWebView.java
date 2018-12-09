@@ -1,9 +1,9 @@
 package com.qw.qw_ad;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
@@ -17,20 +17,28 @@ import android.webkit.WebView;
  * https://www.jianshu.com/p/2857d55e2f6e
  */
 public class QWADWebView extends Activity {
+    private static final String TAG = "QWADWebView";
     private static String H5_URI="file:///android_asset/h5_latest/index.html";
     WebView myWebView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //在共享系统（sharedUserId="android.uid.system）空间时，webview实例化可能会出现错误
+        try{
+            myWebView = new WebView(getApplicationContext());
+        }catch (Exception e){
+            Log.e(TAG,"当前系统设置不支持webView组件在系统控件中实例化",e);
+        }
+        if(myWebView != null){
+            setContentView(myWebView);
 
-        myWebView = new WebView(getApplicationContext());
-        setContentView(myWebView);
+            customyWebViewSettings(myWebView);
+            customyWebViewClient(myWebView);
+            injectJSInterface(myWebView);
 
-        customyWebViewSettings(myWebView);
-        customyWebViewClient(myWebView);
-        injectJSInterface(myWebView);
+            loadData(myWebView);
+        }
 
-        loadData(myWebView);
 
     }
 
@@ -101,7 +109,7 @@ public class QWADWebView extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // Check if the key event was the Back button and if there's history
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && myWebView.canGoBack()) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && myWebView.canGoBack() && myWebView != null) {
             myWebView.goBack();
             return true;
         }
@@ -127,12 +135,16 @@ public class QWADWebView extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        myWebView.onPause();
+        if(myWebView != null){
+            myWebView.onPause();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        myWebView.onResume();
+        if(myWebView != null){
+            myWebView.onResume();
+        }
     }
 }

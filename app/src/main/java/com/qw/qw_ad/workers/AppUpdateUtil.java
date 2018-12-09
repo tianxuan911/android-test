@@ -12,10 +12,12 @@ import com.qw.qw_ad.ApiConsts;
 import com.qw.qw_ad.ApiUtils;
 import com.qw.qw_ad.AppUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
 import okhttp3.Call;
@@ -24,23 +26,26 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class AppUpdateUtil {
+    public static final String TAG = "AppUpdateUtil";
     //任务执行周期/毫秒
     public static final long PERIODIC = 5 * 1000L;
     private static boolean isDownloading = false;
     private File downloadDir = null;
     private String apkName = null;
+    private String pkgName = null;
     private Context context = null;
 
     public AppUpdateUtil(Context context) {
         this.context = context;
         downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
         apkName = AppUtils.getAppName(context) + ".apk";
+        pkgName = AppUtils.getPackageName(context);
     }
 
     public void updateApp() {
         //如果服务器版本号与当前APP版本号不同,下载apk->安装->重启app
         int latestedVersionCode = getAppVersionCode();
-        Log.i(this.getClass().getName(), String.format("对比版本号,当前版本号[%d],最新版本号[%d]", AppUtils.getVersionCode(context), latestedVersionCode));
+        Log.i(TAG, String.format("对比版本号,当前版本号[%d],最新版本号[%d]", AppUtils.getVersionCode(context), latestedVersionCode));
         if (isDownloading == true || latestedVersionCode == -1 || AppUtils.getVersionCode(context) == latestedVersionCode) {
             return;
         }
@@ -48,21 +53,21 @@ public class AppUpdateUtil {
 
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e(this.getClass().getName(), "APK下载失败", e);
+                Log.e(TAG, "APK下载失败", e);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.i(this.getClass().getName(), String.format("启动最新版本APK下载,文件目录[%s]", downloadDir.getAbsolutePath()));
+                Log.i(TAG, String.format("启动最新版本APK下载,文件目录[%s]", downloadDir.getAbsolutePath()));
 
                 if (response.code() != HttpURLConnection.HTTP_OK) {
-                    Log.i(this.getClass().getName(), String.format("最新版本APK失败[HTTPCODE:%d]", response.code()));
+                    Log.i(TAG, String.format("最新版本APK失败[HTTPCODE:%d]", response.code()));
                     return;
                 }
 
                 downloadApk(response);
 
-                installApp();
+                installAppBySlef();
 
             }
 
@@ -77,7 +82,7 @@ public class AppUpdateUtil {
                     byte[] buffer = new byte[1024];
                     int size;
                     while ((size = inputStream.read(buffer)) > 0) {
-//                        Log.d(this.getClass().getName(), String.format("本次下载进度%dbyte", size));
+//                        Log.d(TAG, String.format("本次下载进度%dbyte", size));
                         outputStream.write(buffer, 0, size);
                     }
                 } finally {
@@ -89,7 +94,7 @@ public class AppUpdateUtil {
                         inputStream.close();
                     }
                 }
-                Log.i(this.getClass().getName(), String.format("最新版本APK下载成功,文件目录[%s]", downloadDir.getAbsolutePath()));
+                Log.i(TAG, String.format("最新版本APK下载成功,文件目录[%s]", downloadDir.getAbsolutePath()));
             }
         });
     }
@@ -106,15 +111,21 @@ public class AppUpdateUtil {
             Response response = ApiUtils.getClient().newCall(request).execute();
             String versionCode = response.body().string();
             response.close();
-            Log.d(this.getClass().getName(), String.format("最新版本号[%s]", versionCode));
+            Log.d(TAG, String.format("最新版本号[%s]", versionCode));
             return Integer.parseInt(versionCode);
         } catch (IOException e) {
-            Log.e(this.getClass().getName(), "版本号获取错误", e);
+            Log.e(TAG, "版本号获取错误", e);
         }
         return -1;
     }
 
-    private void installApp() {
+    /**
+     *
+     * 调用系统原生组件安装。调用系统相关服务，自动点击完成安装，需要系统默认开启相关服务
+     * https://www.jianshu.com/p/719bd48fec11
+     *
+     */
+    private void installAppBySlef() {
         Log.i(this.getClass().getName(), String.format("启动最新版本APK安装,文件目录[%s]", downloadDir.getAbsolutePath()));
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -133,4 +144,51 @@ public class AppUpdateUtil {
         }
         context.startActivity(intent);
     }
+
+
+    /**
+     *
+     * 静默安装参考，需要共享系统空间，APK加入系统签名后可用
+     * https://blog.csdn.net/to_perfect/article/details/81809644
+     * android源码查看网站
+     * http://androidxref.com/
+     *
+     */
+    private void installAppSlient() {
+
+        Log.i(TAG, String.format("启动最新版本APK安装,文件目录[%s]", downloadDir.getAbsolutePath()));
+
+        File apkFile = new File(downloadDir, apkName);
+        String cmd = "";
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
+            cmd = String.format("pm install -r -d ",apkFile.getAbsolutePath());
+        } else {
+            cmd = String.format("pm install -r -d -i %s --user 0 %s",pkgName,apkFile.getAbsolutePath());
+        }
+        try {
+            Runtime runtime = Runtime.getRuntime();
+            Process process = runtime.exec(cmd);
+            InputStream errorInput = process.getErrorStream();
+            InputStream inputStream = process.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String error = "";
+            String result = "";
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                result += line;
+            }
+            bufferedReader = new BufferedReader(new InputStreamReader(errorInput));
+            while ((line = bufferedReader.readLine()) != null) {
+                error += line;
+            }
+            if(result.equals("Success")){
+                Log.i(TAG, "install: Success");
+            }else{
+                Log.i(TAG, "install: error"+error);
+            }
+        } catch (IOException e) {
+            Log.i(TAG, "install: error",e);
+        }
+    }
+
 }
