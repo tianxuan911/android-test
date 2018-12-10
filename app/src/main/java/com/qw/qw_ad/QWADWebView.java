@@ -25,6 +25,7 @@ public class QWADWebView extends Activity {
         super.onCreate(savedInstanceState);
         //在共享系统（sharedUserId="android.uid.system）空间时，webview实例化可能会出现错误
         try{
+            AppUtils.hookWebView();
             myWebView = new WebView(getApplicationContext());
         }catch (Exception e){
             Log.e(TAG,"当前系统设置不支持webView组件在系统控件中实例化",e);

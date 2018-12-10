@@ -3,27 +3,43 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         debug {
-//            keyAlias 'qwad'
-//            keyPassword '123456'
-//            storeFile file('../../keystore/qwad-sysauth.jks')
-//            storePassword '123456'
+            keyAlias 'qwad'
+            keyPassword '123456'
+            storeFile file('../../keystore/qwad-sysauth.jks')
+            storePassword '123456'
         }
         release {
-//            keyAlias 'qwad'
-//            keyPassword '123456'
-//            storeFile file('../../keystore/qwad-sysauth.jks')
-//            storePassword '123456'
+            keyAlias 'qwad'
+            keyPassword '123456'
+            storeFile file('../../keystore/qwad-sysauth.jks')
+            storePassword '123456'
         }
     }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.qw.qw_ad"
         minSdkVersion 15
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        debug {
+            keyAlias 'qwad'
+            keyPassword '123456'
+            storeFile file('../../keystore/qwad-sysauth.jks')
+            storePassword '123456'
+        }
+        release {
+            keyAlias 'qwad'
+            keyPassword '123456'
+            storeFile file('../../keystore/qwad-sysauth.jks')
+            storePassword '123456'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -34,6 +50,8 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
 

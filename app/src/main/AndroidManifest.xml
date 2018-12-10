@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.qw.qw_ad">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.qw.qw_ad"
+    android:sharedUserId="android.uid.system">
 
     <!--如果需要使用系统权限-->
     <!--manifest 增加 android:sharedUserId="android.uid.system" -->
 
-    <!--<uses-permission android:name="android.permission.INSTALL_PACKAGES" />-->
+    <uses-permission android:name="android.permission.INSTALL_PACKAGES"
+        tools:ignore="ProtectedPermissions" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
