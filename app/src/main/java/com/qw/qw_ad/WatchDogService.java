@@ -1,9 +1,5 @@
 package com.qw.qw_ad;
 
-import android.annotation.TargetApi;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
@@ -27,15 +23,17 @@ public class WatchDogService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        new WatchDogUtil(getApplicationContext()).runApp();
-
-        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            startSchedule(getApplicationContext());
+        try{
+            new WatchDogUtil(getApplicationContext()).runApp();
+        }catch (Exception e){
+            Log.e(TAG,"APP重启出现错误",e);
+        }finally {
+            if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                startSchedule(getApplicationContext());
+            }
+            //Call Job Finished
+            jobFinished(params, false );
         }
-
-        //Call Job Finished
-        jobFinished(params, false );
-
         return true;
 
     }

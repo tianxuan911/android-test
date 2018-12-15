@@ -1,24 +1,15 @@
 package com.qw.qw_ad;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.Service;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
-import android.service.notification.NotificationListenerService;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.qw.qw_ad.workers.AppUpdateUtil;
-
-import static com.qw.qw_ad.workers.AppUpdateUtil.PERIODIC;
 
 public class AppUpdateSchedulerService extends JobService {
 
@@ -26,11 +17,16 @@ public class AppUpdateSchedulerService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        new AppUpdateUtil(getApplicationContext()).updateApp();
-        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-            startScheduler(getApplicationContext());
+        try {
+            new AppUpdateUtil(getApplicationContext()).updateApp();
+        }catch (Exception e){
+            Log.e(TAG,"APP更新出现错误",e);
+        }finally{
+            if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                startScheduler(getApplicationContext());
+            }
+            jobFinished(params,false);
         }
-        jobFinished(params,false);
         return true;
     }
 
