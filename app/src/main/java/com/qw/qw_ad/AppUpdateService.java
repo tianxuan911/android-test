@@ -23,7 +23,6 @@ public class AppUpdateService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        startForeground(SchedulerJobs.JOB_ID_APP_UPDATE, new Notification());
     }
 
     @Override

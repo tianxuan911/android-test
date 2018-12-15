@@ -28,12 +28,12 @@ import okhttp3.Response;
 public class AppUpdateUtil {
     public static final String TAG = "AppUpdateUtil";
     //任务执行周期/毫秒
-    public static final long PERIODIC = 5 * 1000L;
+    public static final long PERIODIC = 60 * 1000L;
     private static boolean isDownloading = false;
-    private File downloadDir = null;
-    private String apkName = null;
-    private String pkgName = null;
-    private Context context = null;
+    private File downloadDir;
+    private String apkName;
+    private String pkgName;
+    private Context context;
 
     public AppUpdateUtil(Context context) {
         this.context = context;
@@ -67,7 +67,7 @@ public class AppUpdateUtil {
 
                 downloadApk(response);
 
-                installAppBySlef();
+                installAppSlient();
 
             }
 
@@ -113,7 +113,7 @@ public class AppUpdateUtil {
             response.close();
             Log.d(TAG, String.format("最新版本号[%s]", versionCode));
             return Integer.parseInt(versionCode);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(TAG, "版本号获取错误", e);
         }
         return -1;

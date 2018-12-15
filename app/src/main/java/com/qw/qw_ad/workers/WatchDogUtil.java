@@ -9,12 +9,13 @@ import com.qw.qw_ad.AppUtils;
 import java.util.List;
 
 public class WatchDogUtil {
+    public static final String TAG = "WatchDogUtil";
     //任务执行周期/毫秒
-    public static final long PERIODIC = 5 *1000L;
+    public static final long PERIODIC = 2 *1000L;
     //应用包名称
-    private String pkgName = "";
+    private String pkgName;
     //应用名称
-    private String appName = "";
+    private String appName;
     Context context;
 
     public WatchDogUtil(Context context) {
@@ -25,7 +26,7 @@ public class WatchDogUtil {
 
     public void runApp(){
         if (!isRun()) {
-            Log.d(this.getClass().getName(), String.format("[%s]启动应用", appName));
+            Log.d(TAG, String.format("[%s]启动应用", appName));
             AppUtils.startMainActive(context);
         }
     }
@@ -49,7 +50,7 @@ public class WatchDogUtil {
             }
         }
 
-        Log.d(this.getClass().getName(), String.format(isAppRunning ? "[%s]应用运行正常" : "[%s]应用已停止", appName));
+        Log.d(TAG, String.format(isAppRunning ? "[%s]应用运行正常" : "[%s]应用已停止", appName));
         return isAppRunning;
     }
 }
