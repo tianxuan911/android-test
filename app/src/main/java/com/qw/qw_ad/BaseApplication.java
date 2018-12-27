@@ -5,7 +5,17 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.SystemClock;
 import android.util.Log;
+
+import com.qw.qw_ad.service.AppUpdateSchedulerService;
+import com.qw.qw_ad.service.AppUpdateServiceLess21;
+import com.qw.qw_ad.service.WatchDogService;
+import com.qw.qw_ad.service.WatchDogServiceLess21;
+import com.qw.qw_ad.utils.AppUpdateUtil;
+import com.qw.qw_ad.utils.SchedulerJobs;
+import com.qw.qw_ad.utils.WatchDogUtil;
 
 public class BaseApplication extends Application {
 
@@ -31,15 +41,30 @@ public class BaseApplication extends Application {
      * 启动计划任务
      */
     private void runAppDeamon() {
-        WatchDogService.startSchedule(getApplicationContext());
-        AppUpdateSchedulerService.startScheduler(getApplicationContext());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            WatchDogService.startSchedule(getApplicationContext());
+            AppUpdateSchedulerService.startScheduler(getApplicationContext());
+        }else{
+
+            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+
+            Intent appUpdateIntent = new Intent(mContext,AppUpdateServiceLess21.class);
+            PendingIntent appUpdatePi = PendingIntent.getService(mContext,SchedulerJobs.JOB_ID_APP_UPDATE,appUpdateIntent,PendingIntent.FLAG_CANCEL_CURRENT);
+            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, AppUpdateUtil.PERIODIC + SystemClock.elapsedRealtime(), AppUpdateUtil.PERIODIC, appUpdatePi);
+
+
+            Intent watchDogIntent = new Intent(mContext,WatchDogServiceLess21.class);
+            PendingIntent watchDogPi = PendingIntent.getService(mContext,SchedulerJobs.JOB_ID_WATCH_DOG,watchDogIntent,PendingIntent.FLAG_CANCEL_CURRENT);
+            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, WatchDogUtil.PERIODIC + SystemClock.elapsedRealtime(), WatchDogUtil.PERIODIC, watchDogPi);
+
+        }
     }
 
     private Thread.UncaughtExceptionHandler restartHandler = new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             Log.e("error", "未处理的异常", e);
-            Intent intent = new Intent(mContext, QWADWebView.class);
+            Intent intent = new Intent(mContext, MainActivity.class);
             //重启应用
             PendingIntent restartIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             //2秒钟后重启应用

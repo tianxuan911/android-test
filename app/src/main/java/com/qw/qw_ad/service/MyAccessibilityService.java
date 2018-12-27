@@ -1,4 +1,4 @@
-package com.qw.qw_ad;
+package com.qw.qw_ad.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.TargetApi;

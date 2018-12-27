@@ -1,4 +1,4 @@
-package com.qw.qw_ad;
+package com.qw.qw_ad.service;
 
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
@@ -7,9 +7,11 @@ import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import com.qw.qw_ad.workers.WatchDogUtil;
+import com.qw.qw_ad.utils.SchedulerJobs;
+import com.qw.qw_ad.utils.WatchDogUtil;
 
 /**
  * 守护服务
@@ -17,6 +19,7 @@ import com.qw.qw_ad.workers.WatchDogUtil;
  * https://www.jianshu.com/p/1da4541b70ad
  * https://blog.csdn.net/aqi00/article/details/71638721
  */
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class WatchDogService extends JobService {
 
     private static final String TAG = "WatchDogService";

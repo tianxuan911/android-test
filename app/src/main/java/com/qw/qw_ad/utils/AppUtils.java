@@ -1,4 +1,4 @@
-package com.qw.qw_ad;
+package com.qw.qw_ad.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
+
+import com.qw.qw_ad.MainActivity;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -116,7 +118,7 @@ public class AppUtils {
      * @param context
      */
     public static void startMainActive(Context context){
-        Intent mBootIntent = new Intent(context, QWADWebView.class);
+        Intent mBootIntent = new Intent(context, MainActivity.class);
         mBootIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(mBootIntent);
     }

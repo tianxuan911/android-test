@@ -1,4 +1,4 @@
-package com.qw.qw_ad;
+package com.qw.qw_ad.utils;
 
 public class SchedulerJobs {
     public final static int JOB_ID_WATCH_DOG = 1010;

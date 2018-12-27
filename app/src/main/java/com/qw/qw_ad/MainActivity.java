@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import com.qw.qw_ad.utils.AppUtils;
+
 /**
  * 官方教程
  * https://developer.android.com/guide/webapps/webview
@@ -16,8 +18,8 @@ import android.webkit.WebView;
  * https://www.jianshu.com/p/3c94ae673e2a
  * https://www.jianshu.com/p/2857d55e2f6e
  */
-public class QWADWebView extends Activity {
-    private static final String TAG = "QWADWebView";
+public class MainActivity extends Activity {
+    private static final String TAG = "MainActivity";
     private static String H5_URI="file:///android_asset/h5_latest/index.html";
     WebView myWebView;
     @Override

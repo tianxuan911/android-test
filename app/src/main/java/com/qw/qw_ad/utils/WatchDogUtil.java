@@ -1,10 +1,10 @@
-package com.qw.qw_ad.workers;
+package com.qw.qw_ad.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.util.Log;
 
-import com.qw.qw_ad.AppUtils;
+import com.qw.qw_ad.utils.AppUtils;
 
 import java.util.List;
 

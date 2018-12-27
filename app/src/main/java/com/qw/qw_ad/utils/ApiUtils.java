@@ -1,4 +1,4 @@
-package com.qw.qw_ad;
+package com.qw.qw_ad.utils;
 
 import okhttp3.OkHttpClient;
 

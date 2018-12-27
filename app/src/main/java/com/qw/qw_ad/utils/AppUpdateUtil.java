@@ -1,4 +1,4 @@
-package com.qw.qw_ad.workers;
+package com.qw.qw_ad.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,17 +8,20 @@ import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 
-import com.qw.qw_ad.ApiConsts;
-import com.qw.qw_ad.ApiUtils;
-import com.qw.qw_ad.AppUtils;
+import com.qw.qw_ad.MainActivity;
+import com.qw.qw_ad.utils.ApiConsts;
+import com.qw.qw_ad.utils.ApiUtils;
+import com.qw.qw_ad.utils.AppUtils;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.nio.charset.Charset;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -67,7 +70,7 @@ public class AppUpdateUtil {
 
                 downloadApk(response);
 
-                installAppSlient();
+                installAppSlientByRoot();
 
             }
 
@@ -159,27 +162,26 @@ public class AppUpdateUtil {
         Log.i(TAG, String.format("启动最新版本APK安装,文件目录[%s]", downloadDir.getAbsolutePath()));
 
         File apkFile = new File(downloadDir, apkName);
-        String cmd = "";
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
-            cmd = String.format("pm install -r -d ",apkFile.getAbsolutePath());
-        } else {
-            cmd = String.format("pm install -r -d -i %s --user 0 %s",pkgName,apkFile.getAbsolutePath());
-        }
+        String cmd = getInstallCommand(apkFile.getAbsolutePath());
         try {
             Runtime runtime = Runtime.getRuntime();
             Process process = runtime.exec(cmd);
+            process.waitFor();
             InputStream errorInput = process.getErrorStream();
             InputStream inputStream = process.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             String error = "";
             String result = "";
             String line = "";
+
             while ((line = bufferedReader.readLine()) != null) {
                 result += line;
+                Log.i(TAG,"result "+line);
             }
             bufferedReader = new BufferedReader(new InputStreamReader(errorInput));
             while ((line = bufferedReader.readLine()) != null) {
                 error += line;
+                Log.i(TAG,"error  "+line);
             }
             if(result.equals("Success")){
                 Log.i(TAG, "install: Success");
@@ -187,8 +189,89 @@ public class AppUpdateUtil {
                 Log.i(TAG, "install: error"+error);
             }
         } catch (IOException e) {
-            Log.i(TAG, "install: error",e);
+            Log.i(TAG, e.getLocalizedMessage(),e);
+        } catch (InterruptedException e) {
+            Log.i(TAG, e.getLocalizedMessage(),e);
         }
+    }
+
+
+    /**
+     * 执行具体的静默安装逻辑，需要手机ROOT。
+     * @return 安装成功返回true，安装失败返回false。
+     */
+    private boolean installAppSlientByRoot() {
+        String apkPath = new File(downloadDir, apkName).getAbsolutePath();
+        boolean result = false;
+        DataOutputStream dataOutputStream = null;
+        BufferedReader errorStream = null;
+        try {
+            Charset charSet = Charset.forName("utf-8");
+            // 申请su权限
+            Process process = Runtime.getRuntime().exec("su");
+
+            dataOutputStream = new DataOutputStream(process.getOutputStream());
+
+
+            //安裝APK
+            String install = getInstallCommand(apkPath)+"\n";
+            Log.i(TAG,install);
+            //启动APP
+            String startActivity = String.format("am start %s/%s \n",AppUtils.getPackageName(context),MainActivity.class.getName());
+            Log.i(TAG,startActivity);
+
+            dataOutputStream.write((install+startActivity).getBytes(charSet));
+
+//            dataOutputStream.flush();
+//            dataOutputStream.writeBytes("exit\n");
+            dataOutputStream.flush();
+
+            process.waitFor();
+            errorStream = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String msg = "";
+            String line;
+            // 读取命令的执行结果
+            while ((line = errorStream.readLine()) != null) {
+                msg += line;
+            }
+            Log.d(TAG, "install msg is " + msg);
+            // 如果执行结果中包含Failure字样就认为是安装失败，否则就认为安装成功
+            if (!msg.contains("Failure")) {
+                result = true;
+            }
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+        } catch (InterruptedException e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            try {
+                if (dataOutputStream != null) {
+                    dataOutputStream.close();
+                }
+                if (errorStream != null) {
+                    errorStream.close();
+                }
+            } catch (IOException e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 获取PM安装命令
+     * @param apkFilePath
+     * @return
+     */
+
+    private String getInstallCommand(String apkFilePath) {
+        String cmd;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
+            cmd = String.format("pm install -r -d %s",apkFilePath);
+        } else {
+            cmd = String.format("pm install -r -d -i %s --user 0 %s",pkgName,apkFilePath);
+        }
+        return cmd;
     }
 
 }

@@ -1,9 +1,11 @@
-package com.qw.qw_ad;
+package com.qw.qw_ad.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import com.qw.qw_ad.utils.AppUtils;
 
 /**
  *  开机自启动,如果需要在模拟器中验证，请使用冷启动(cold boot now)，默认是fastboot

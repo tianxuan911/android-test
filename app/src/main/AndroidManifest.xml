@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.qw.qw_ad"
-    android:sharedUserId="android.uid.system">
+    package="com.qw.qw_ad">
 
-    <!--如果需要使用系统权限-->
-    <!--manifest 增加 android:sharedUserId="android.uid.system" -->
+    <!-- 如果需要使用系统权限 -->
+    <!--android:sharedUserId="android.uid.system"-->
 
-    <uses-permission android:name="android.permission.INSTALL_PACKAGES"
+    <!-- 如果需要使用系统权限 -->
+    <!-- manifest 增加 android:sharedUserId="android.uid.system" -->
+
+    <uses-permission
+        android:name="android.permission.INSTALL_PACKAGES"
         tools:ignore="ProtectedPermissions" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
         android:name=".BaseApplication"
@@ -24,14 +26,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".QWADWebView">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!-- 开机自启动广播接受 -->
-        <receiver android:name=".BootCompletedReceiver">
+        <receiver android:name=".receiver.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 
@@ -40,13 +43,11 @@
         </receiver>
         <!-- 看门狗服务 -->
         <service
-            android:name=".WatchDogService"
-            android:permission="android.permission.BIND_JOB_SERVICE"></service>
-        <!-- APP更新服务 -->
-        <service android:name=".AppUpdateService" />
+            android:name=".service.WatchDogService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <!-- APP更新轮询服务 -->
         <service
-            android:name=".AppUpdateSchedulerService"
+            android:name=".service.AppUpdateSchedulerService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <provider
@@ -60,18 +61,27 @@
         </provider>
 
         <service
-            android:name=".MyAccessibilityService"
-            android:label="@string/accessibility_service_description"
+            android:name=".service.MyAccessibilityService"
             android:enabled="true"
             android:exported="true"
+            android:label="@string/accessibility_service_description"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service" />
         </service>
+        <service
+            android:name=".service.AppUpdateServiceLess21"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".service.WatchDogServiceLess21"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
