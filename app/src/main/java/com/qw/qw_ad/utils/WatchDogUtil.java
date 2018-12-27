@@ -11,7 +11,7 @@ import java.util.List;
 public class WatchDogUtil {
     public static final String TAG = "WatchDogUtil";
     //任务执行周期/毫秒
-    public static final long PERIODIC = 2 *1000L;
+    public static final long PERIODIC = 5 *1000L;
     //应用包名称
     private String pkgName;
     //应用名称
