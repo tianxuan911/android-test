@@ -168,7 +168,7 @@
 .flash{height:140px;width:320px;overflow:hidden;position:relative;margin:0 auto;/*margin-top:100px;*/}
 .ul_flash{width:100000px;height:100%}
 .ul_flash li{float:left;width:320px;height:100%}
-.ul_flash img{width:100%;height:100%}
+.ul_flash video{width:100%;height:100%}
 .flash .pagination{clear:both;position:absolute;left:44%;bottom:15px;z-index:99;height:10px; float:left; text-align:left;}
 .flash .pagination span{ float:left;background:url(../images/dian.png) no-repeat; background-size:100% 100%;width:11px;height:9px;text-indent:-9999px;border-radius:50%;-webkit-border-radius:50%;overflow:hidden;margin:0 3px;cursor:pointer;position:relative}
 .flash .pagination span.swiper-active-switch{ background:url(../images/dian2.png) no-repeat; background-size:100% 100%;}

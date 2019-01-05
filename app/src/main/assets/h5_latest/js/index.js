@@ -9,12 +9,12 @@ $(function(){
 		//设置轮播间隔时间
 		var auto_time = 4000;
 		//获取图片数量
-		var auto_num = $(".ul_flash img").length;
+		var auto_num = $(".ul_flash video").length;
 		var auto_width = $(".flash").width();
 		var auto_height = 400;
 		//插入数字番号列表，并为首个列表单元添加样式
-		$(".flash").addClass("swiper-container").append("<div class='pagination'></div>");
-		$(".ul_flash").addClass("swiper-wrapper").find("li").addClass("swiper-slide");
+		// $(".flash").addClass("swiper-container").append("<div class='pagination'></div>");
+		// $(".ul_flash").addClass("swiper-wrapper").find("li").addClass("swiper-slide");
 		function flash()
 		{
 			//获取图片高度
@@ -33,16 +33,20 @@ $(function(){
 			$(".flash").width(auto_width).height(auto_height);
 			$(".ul_flash li").width(auto_width);
 			$(".ul_flash").width(auto_width*auto_num);
-			//$(".pagination").css("left",(auto_width - $(".pagination").width()) / 1.05);
+			// $(".ul_flash").height('auto');
+
+            $("#currentVideoTow").width('100%')
+            $("#currentVideoTow").height('100%')
+			// $(".pagination").css("left",(auto_width - $(".pagination").width()) / 1.05);
 		}
 		flash();
 		$(window).resize(function(){flash()});
-		var mySwiper = $('.swiper-container').swiper({
-			pagination: '.pagination',
-			mode:'horizontal',
-			loop: true,
-			autoplay:5000
-		})
+		// var mySwiper = $('.swiper-container').swiper({
+		// 	pagination: '.pagination',
+		// 	mode:'horizontal',
+		// 	loop: true,
+		// 	autoplay:5000
+		// })
 		//$(".pagination").css("left",(auto_width - $(".pagination").width()) / 1.05);
 	}
 })

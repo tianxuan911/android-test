@@ -13,19 +13,20 @@
     <link href="css/slide.css" rel="stylesheet"/>
     <link href="css/index.css" rel="stylesheet"/>
     <link href="css/css.css" rel="stylesheet"/>
-	
+    <link href="css/video-js.min.css" rel="stylesheet"/>
     <script src="js/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="js/jquery.superslide.2.1.1.js">//pc导航</script>
     <script src="js/jquery.caroufredsel.js">//轮显</script>
     <script src="js/jquery.touchswipe.min.js">//轮显</script>
     <script src="js/public.js">//导航</script>
     <script src="js/anim.js">//动画</script>
-    <script type="text/javascript">
-        function showAndroidToast(toast) {
-            Android.showToast(toast);
-        }
-        showAndroidToast('请在JS中使用Android对象调用android内置方法!')
-    </script>
+    <script src="js/video.min.js"></script>
+    <!--<script type="text/javascript">-->
+        <!--function showAndroidToast(toast) {-->
+            <!--Android.showToast(toast);-->
+        <!--}-->
+        <!--showAndroidToast('请在JS中使用Android对象调用android内置方法!')-->
+    <!--</script>-->
 </head>
 
 <body>
@@ -167,9 +168,9 @@
             <div class="touch-menu" skinobjectzone="menu_2005">
                 <ul>
                     <li><a href="index.html"><span>首页</span></a></li>
-                                        
-                    <li><a href="javascript:;"><span>关于我们</span><i class="touch-arrow-down"></i> </a> 
-                        <ul>  
+
+                    <li><a href="javascript:;"><span>关于我们</span><i class="touch-arrow-down"></i> </a>
+                        <ul>
                             <li><a href="QiYeJianJie.html"><span>企业简介</span></a></li>
 							<li><a href="FaZhanLiCheng.html"><span>发展历程</span></a></li>
 							<li><a href="QiYeWenHua.html"><span>企业文化</span></a></li>
@@ -177,9 +178,9 @@
 							<li><a href="XinWenDongTai.html"><span>新闻动态</span></a></li>
 							<li><a href="ZhaoXianNaShi.html"><span>招贤纳士</span></a></li>
 						</ul>
-                    </li>                    
-                    <li> <a href="javascript:;"><span>产品与服务</span><i class="touch-arrow-down"></i> </a> 
-                        <ul>  
+                    </li>
+                    <li> <a href="javascript:;"><span>产品与服务</span><i class="touch-arrow-down"></i> </a>
+                        <ul>
                             <li><a href="product.html"><span>气保焊系列</span></a></li>
 							<li><a href="product.html"><span>氩弧焊系列</span></a></li>
 							<li><a href="product.html"><span>手工焊系列</span></a></li>
@@ -187,27 +188,27 @@
 							<li><a href="product.html"><span>埋弧焊系列</span></a></li>
 							<li><a href="product.html"><span>电子元器件</span></a></li>
 						</ul>
-                    </li>                    
-                    <li> <a href="javascript:;"><span>资讯中心</span><i class="touch-arrow-down"></i> </a> 
-                        <ul>  
+                    </li>
+                    <li> <a href="javascript:;"><span>资讯中心</span><i class="touch-arrow-down"></i> </a>
+                        <ul>
                             <li><a href="news.html"><span>焊接资讯</span></a></li>
 							<li><a href="news.html"><span>专业知识</span></a></li>
 							<li><a href="XiaZaiZhongXin.html"><span>下载中心</span></a></li>
 						</ul>
-                    </li>                    
-                    <li> <a href="javascript:;"><span>技术服务</span><i class="touch-arrow-down"></i> </a> 
-                        <ul>  
+                    </li>
+                    <li> <a href="javascript:;"><span>技术服务</span><i class="touch-arrow-down"></i> </a>
+                        <ul>
                             <li><a href="news.html"><span>研发中心</span></a></li>
 							<li><a href="ShouHouFuWu.html"><span>售后服务</span></a></li>
 							<li><a href="ZaiXianZiXun.html"><span>在线咨询</span></a></li>
 						</ul>
-                    </li>                    
-                    <li><a href=""><span>工程案例</span> </a> 
+                    </li>
+                    <li><a href=""><span>工程案例</span> </a>
                         <ul></ul>
-                    </li>                    
-                    <li><a href=""><span>联系我们</span> </a> 
+                    </li>
+                    <li><a href=""><span>联系我们</span> </a>
                         <ul></ul>
-                    </li>                    
+                    </li>
                  	<li><a href="#" class="languages">EN</a>                 </li>
                 </ul>
                 <div class="closetitle"><img src="picture/nav_bg2.png"></div>
@@ -224,60 +225,38 @@
 <div class="blank_h">&nbsp;</div>
 <!--轮显begin-->
 <div id="a1portalSkin_ctr211899211899_mainArea" class="module-content"><!-- Start_Module_211899 --><!-- S slideshow -->
-    <div class="slideshow carousel clearfix" style="height:750px; overflow:hidden;">
+    <div class="slideshow carousel clearfix" >
         <div id="carousel-211899">
             <div class="carousel-item">
-                    <div class="carousel-img"><a href="javascript:void(0);" target=""><img src="picture/595f3baf175f1.jpg" height="750"  alt=""/></a></div>
-                </div><div class="carousel-item">
-                    <div class="carousel-img"><a href="javascript:void(0);" target=""><img src="picture/595f3b64e7a32.jpg" height="750"  alt=""/></a></div>
-                </div><div class="carousel-item">
-                    <div class="carousel-img"><a href="javascript:void(0);" target=""><img src="picture/5932336032842.jpg" height="750"  alt=""/></a></div>
-                </div>
+                    <div class="carousel-img">
+                        <a href="javascript:void(0);" target="">
+                            <video id="currentVideoOne" poster="images/video_cover.jpeg"/>
+                        </a>
+                    </div>
+            </div>
         </div>
-
         <div class="carousel-btn carousel-btn-fixed" id="carousel-page-211899"></div>
         <div class="carousel-page">
-            <div class="carousel-prev" id="carousel-prev-211899"  ></div>
-            <div class="carousel-next" id="carousel-next-211899"></div>
+            <!--<div class="carousel-prev" id="carousel-prev-211899"  ></div>-->
+            <!--<div class="carousel-next" id="carousel-next-211899"></div>-->
         </div>
     </div>
-    <script type="text/javascript">
-        $(window).bind("load resize", function () {
-
-            $("#carousel-211899").carouFredSel({
-
-                width: '100%',
-
-                items: {visible: 1},
-
-                auto: {pauseOnHover: true, timeoutDuration: 5000},
-
-                swipe: {onTouch: true, onMouse: true},
-
-                pagination: "#carousel-page-211899",
-
-                prev: {button: "#carousel-prev-211899"},
-
-                next: {button: "#carousel-next-211899"},
-
-                scroll: {fx: "crossfade"}//注释的话就是滚动的
-
-            });
-
-        });
-
-    </script>
-    <!-- E slideshow --><!-- End_Module_211899 --></div>
+    <!-- E slideshow --><!-- End_Module_211899 -->
+</div>
 <!--轮显end-->
 <!--flash start-->
 <div class="flash_div">
     <div class="flash">
         <ul class="ul_flash">
-            <li><a href="javascript:void(0);" title=""><img src="picture/595f56bb7f535.jpg" alt=""></a></li><li><a href="javascript:void(0);" title=""><img src="picture/595f55a7820e7.jpg" alt=""></a></li><li><a href="javascript:void(0);" title=""><img src="picture/595f5597df847.jpg" alt=""></a></li>
+            <li>
+                <a href="javascript:void(0);" title="">
+                    <video id="currentVideoTow" poster="images/video_cover.jpeg"/>
+                </a>
+            </li>
         </ul>
     </div>
 </div>
-<script type="text/javascript" src="js/idangerous.swiper-2.0.min.js"></script>
+<!--<script type="text/javascript" src="js/idangerous.swiper-2.0.min.js"></script>-->
 <script type="text/javascript" src="js/index.js"></script>
 <!--flash end-->
 <!--产品中心begin-->
@@ -844,6 +823,35 @@ PT SPEED MIG-500
 
 
     })
+
+    var currentIndex = 1
+    var options = {autoplay: 'any'};
+    var videoId = 'currentVideoOne';
+
+    //获取当前使用的播放器ID
+    if($('#a1portalSkin_ctr211899211899_mainArea').css('display') === 'none'){
+        videoId='currentVideoTow'
+    }
+    videojs.log('currentVideoPlayer is '+videoId);
+    var player = videojs(videoId, options, function onPlayerReady() {
+
+        videojs.log(videoId+'####Your player is ready!');
+
+        //播放器窗口自适应
+        $('#currentVideoOne').width("100%")
+		$('#currentVideoOne').height("100%")
+
+		//开始播放
+        this.play();
+
+        //当期视频播放结束，播放下一条
+        this.on('ended', function() {
+            currentIndex = currentIndex%3+1
+            videojs.log('Awww...over so soon?Next!');
+            player.src('videos/'+currentIndex+'.mp4')
+        });
+    });
+    player.src('videos/'+currentIndex+'.mp4')
 </script>
 <!--弹窗end-->
 </body>

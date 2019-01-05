@@ -23,6 +23,7 @@ window.onload=function()
 //回到顶部
 function goTop(){
 	$('html,body').animate({'scrollTop':0},600);
+	window.location.reload()
 }
 
 function inewsc(objs,src)
