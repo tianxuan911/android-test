@@ -825,7 +825,7 @@ PT SPEED MIG-500
     })
 
     var currentIndex = 1
-    var options = {autoplay: 'any'};
+    var options = {autoplay: 'play'};
     var videoId = 'currentVideoOne';
 
     //获取当前使用的播放器ID
@@ -852,6 +852,14 @@ PT SPEED MIG-500
         });
     });
     player.src('videos/'+currentIndex+'.mp4')
+
+    /**
+     * 页面加载后，部分操作需要用户交互才可执行，脚本调用自动执行会被webview禁止，例如视频播放。
+     * 这些被禁止的自动调用，可以放在名称为runByAndroidAfterLoaded的无参方法，由APP在页面加载完毕后自动执行。
+     */
+    function runByAndroidAfterLoaded(){
+        player.play()
+    }
 </script>
 <!--弹窗end-->
 </body>
