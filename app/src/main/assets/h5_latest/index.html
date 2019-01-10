@@ -13,14 +13,14 @@
     <link href="css/slide.css" rel="stylesheet"/>
     <link href="css/index.css" rel="stylesheet"/>
     <link href="css/css.css" rel="stylesheet"/>
-    <link href="css/video-js.min.css" rel="stylesheet"/>
+    <!--<link href="css/video-js.min.css" rel="stylesheet"/>-->
     <script src="js/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="js/jquery.superslide.2.1.1.js">//pc导航</script>
     <script src="js/jquery.caroufredsel.js">//轮显</script>
     <script src="js/jquery.touchswipe.min.js">//轮显</script>
     <script src="js/public.js">//导航</script>
     <script src="js/anim.js">//动画</script>
-    <script src="js/video.min.js"></script>
+    <!--<script src="js/video.min.js"></script>-->
     <!--<script type="text/javascript">-->
         <!--function showAndroidToast(toast) {-->
             <!--Android.showToast(toast);-->
@@ -230,7 +230,7 @@
             <div class="carousel-item">
                     <div class="carousel-img">
                         <a href="javascript:void(0);" target="">
-                            <video id="currentVideoOne" poster="images/video_cover.jpeg"/>
+                            <video id="currentVideoOne" width="100%" height="100%" autoplay="autoplay" controls="controls" poster="images/video_cover.jpeg"/>
                         </a>
                     </div>
             </div>
@@ -250,7 +250,7 @@
         <ul class="ul_flash">
             <li>
                 <a href="javascript:void(0);" title="">
-                    <video id="currentVideoTow" poster="images/video_cover.jpeg"/>
+                    <video width="100%" height="100%" id="currentVideoTow" autoplay="autoplay" controls="controls" poster="images/video_cover.jpeg"/>
                 </a>
             </li>
         </ul>
@@ -824,42 +824,47 @@ PT SPEED MIG-500
 
     })
 
-    var currentIndex = 1
-    var options = {autoplay: 'play'};
-    var videoId = 'currentVideoOne';
 
-    //获取当前使用的播放器ID
-    if($('#a1portalSkin_ctr211899211899_mainArea').css('display') === 'none'){
-        videoId='currentVideoTow'
-    }
-    videojs.log('currentVideoPlayer is '+videoId);
-    var player = videojs(videoId, options, function onPlayerReady() {
 
-        videojs.log(videoId+'####Your player is ready!');
+    $(document).ready(function(){
 
-        //播放器窗口自适应
-        $('#currentVideoOne').width("100%")
-		$('#currentVideoOne').height("100%")
+        //获取当前使用的播放器ID
+        var videoId = 'currentVideoOne'
+        if($('#a1portalSkin_ctr211899211899_mainArea').css('display') === 'none'){
+            videoId='currentVideoTow'
+        }
+        console.log('Player id # '+videoId)
 
-		//开始播放
-        this.play();
+        var vList = ['videos/1.mp4', 'videos/2.mp4', 'videos/3.mp4']; // 初始化播放列表
+        var vLen = vList.length;
+        var curr = 0;
 
-        //当期视频播放结束，播放下一条
-        this.on('ended', function() {
-            currentIndex = currentIndex%3+1
-            videojs.log('Awww...over so soon?Next!');
-            player.src('videos/'+currentIndex+'.mp4')
+        var video = document.getElementById(videoId);
+
+        video.addEventListener('ended', function(){
+            play();
         });
-    });
-    player.src('videos/'+currentIndex+'.mp4')
 
-    /**
-     * 页面加载后，部分操作需要用户交互才可执行，脚本调用自动执行会被webview禁止，例如视频播放。
-     * 这些被禁止的自动调用，可以放在名称为runByAndroidAfterLoaded的无参方法，由APP在页面加载完毕后自动执行。
-     */
-    function runByAndroidAfterLoaded(){
-        player.play()
-    }
+        function play() {
+            curr = curr%vLen;
+            console.log('Play video # '+vList[curr])
+            video.src = 'http://192.168.0.142:9101/'+vList[curr];
+            video.load();
+            video.play();
+            curr++;
+        }
+
+
+        /**
+         * 页面加载后，部分操作需要用户交互才可执行，脚本调用自动执行会被webview禁止，例如视频播放。
+         * 这些被禁止的自动调用，可以放在名称为runByAndroidAfterLoaded的无参方法，由APP在页面加载完毕后自动执行。
+         */
+        function runByAndroidAfterLoaded(){
+            play()
+        }
+    });
+
+
 </script>
 <!--弹窗end-->
 </body>
