@@ -848,12 +848,11 @@ PT SPEED MIG-500
         function play() {
             curr = curr%vLen;
             console.log('Play video # '+vList[curr])
-            video.src = 'http://192.168.0.142:9101/'+vList[curr];
+            video.src = vList[curr];
             video.load();
             video.play();
             curr++;
         }
-
 
         /**
          * 页面加载后，部分操作需要用户交互才可执行，脚本调用自动执行会被webview禁止，例如视频播放。
