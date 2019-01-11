@@ -2,6 +2,7 @@ package com.qw.qw_ad;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -9,7 +10,11 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
-import com.qw.qw_ad.utils.AppUtils;
+
+import java.io.File;
+import java.io.IOException;
+
+import fi.iki.elonen.SimpleWebServer;
 
 /**
  * 官方教程
@@ -20,14 +25,37 @@ import com.qw.qw_ad.utils.AppUtils;
  */
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
-    private static String H5_URI="file:///android_asset/h5_latest/index.html";
+    private static String H5_URI="file:///android_asset/404.html";
+    private static String H5_EXTERNAL_DIR="/qiwei/h5_latest/";
+    private static String SERVER_ROOT="";
+    private static int SERVER_PORT=9010;
     WebView myWebView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //取得sdcard文件路径
+        File path =Environment.getExternalStorageDirectory();
+        if(path.exists()){
+                File h5path = new File(path,H5_EXTERNAL_DIR);
+            if(h5path.exists()){
+                SERVER_ROOT = path+H5_EXTERNAL_DIR;
+                H5_URI=String.format("http://localhost:%d/%s",SERVER_PORT,"index.html");
+                SimpleWebServer simpleWebServer = new SimpleWebServer(null,SERVER_PORT,
+                        new File(SERVER_ROOT),true,"*");
+                try {
+                    if(!simpleWebServer.isAlive()){
+                        simpleWebServer.start();
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG,e.getLocalizedMessage(),e);
+                }
+            }
+        }
+
         //在共享系统（sharedUserId="android.uid.system）空间时，webview实例化可能会出现错误
+
         try{
-            AppUtils.hookWebView();
+//            AppUtils.hookWebView();
             myWebView = new WebView(getApplicationContext());
         }catch (Exception e){
             Log.e(TAG,"当前系统设置不支持webView组件在系统控件中实例化",e);
@@ -79,11 +107,9 @@ public class MainActivity extends Activity {
 
         //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setMediaPlaybackRequiresUserGesture(false);
         // 若加载的 html 里有JS 在执行动画等操作，会造成资源浪费（CPU、电量）
         // 在 onStop 和 onResume 里分别把 setJavaScriptEnabled() 给设置成 false 和 true 即可
-
-        //支持插件
-//        webSettings.setPluginsEnabled(true);
 
         //设置自适应屏幕，两者合用
         webSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
@@ -97,6 +123,7 @@ public class MainActivity extends Activity {
         //其他细节操作
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); //关闭webview中缓存
         webSettings.setAllowFileAccess(true); //设置可以访问文件
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
