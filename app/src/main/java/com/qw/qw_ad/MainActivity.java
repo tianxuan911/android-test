@@ -34,9 +34,10 @@ public class MainActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //取得sdcard文件路径
-        File path =Environment.getExternalStorageDirectory();
+        File path =new File("/mnt/external_sd");
+//        File path1 =Environment.getExternalStorageDirectory();
         if(path.exists()){
-                File h5path = new File(path,H5_EXTERNAL_DIR);
+            File h5path = new File(path,H5_EXTERNAL_DIR);
             if(h5path.exists()){
                 SERVER_ROOT = path+H5_EXTERNAL_DIR;
                 H5_URI=String.format("http://localhost:%d/%s",SERVER_PORT,"index.html");
